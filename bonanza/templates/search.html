@@ -1,0 +1,40 @@
+<!doctype html>
+<title>bonanza - search engine for deals</title>
+<link href="/static/css/bootstrap.css" rel="stylesheet">
+<center>
+<div class="row-fluid">
+  <div class="span8 offset4">
+    <div class="span8">
+      <img src="static/tsoonami.png" /> 
+    <form id="search-form" action="/" method="post" enctype="multipart/form-data">
+      <fieldset>
+        <input type="text" placeholder="search for deals" name="query">
+        <button type="submit" id="search-button" class="btn">search</button>
+      </fieldset>
+    </form>
+    <div id="search-results"> </div>
+    </div>
+  </div>
+</div>
+</center>
+
+<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script>
+$(function() {
+  $('#search-form').submit(function(e) {
+    e.preventDefault();
+    console.log("SUBMIT ");
+    var $form = $( this ),
+    term = $form.find( 'input[name="query"]' ).val(),
+        url = $form.attr( 'action' );
+    console.log("term = "+term+" url = "+url);
+    $.post( url, { query: term },
+      function( data ) {
+        console.log(data);
+        $("#search-results").html(data);
+      }
+    );
+  });
+  console.log("OK");
+});
+</script>
