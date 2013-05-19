@@ -1,0 +1,159 @@
+\documentclass[8pt]{article}
+\usepackage{fullpage}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{hyperref}
+\usepackage[margin=.5in]{geometry}
+%\textheight=10in
+\pagestyle{empty}
+%\raggedbottom
+\raggedright
+\parindent=0in
+\parskip=5pt
+
+
+%\def\bull{\vrule height 0.8ex width .7ex depth -.1ex }
+
+\makeatletter
+\newcommand{\rmnum}[1]{\romannumeral #1}
+\newcommand{\Rmnum}[1]{\expandafter\@slowromancap\romannumeral #1@}
+\makeatother
+
+\newenvironment{achievements}{\begin{list}{$\bullet$}{\topsep 0pt \itemsep -2pt}}{\vspace*{2pt}\end{list}}
+
+
+\begin{document}
+\begin{center}{\Large \scshape James Percent}\\
+12 S Sydney Street, Boston, MA\\
+james@syndeticlogic.org
+\end{center}
+\section*{\underline {Summary}}
+
+I am a highly motivated software developer with refined skills and expertise covering a broad range of technologies, 
+processes and methodologies.  My specialties include: high-availability clustering and distributed algorithms, database
+architecture and implementation, data mining and machine learning,
+parallel, asynchronous and real-time processing, temporal logic,
+model-checking, scrum based project management, test-driven
+development, design patterns, security theory, and systems engineering
+and administration.\\
+
+\section*{\underline {Education}}
+\textbf{Worcester Polytechnic Institute}, Worcester, Massachusetts\\
+Master of Science in Computer Science, 2008\\
+\vspace*{7pt}
+\textbf{Rensselaer Polytechnic Institute}, Troy, New York\\
+Bachelor of Science in Computer Science, \textit{summa cum laude}, 2001
+
+\section*{\underline{Experience}}
+
+\subsection*{\normalsize DataXu, Principal Engineer, Boston, MA, January 2012 - Present}
+
+DataXu is a demand side advertising platform that applies machine
+learning to advertising auctions.  I contributed code to the real-time
+bidding system, the data warehouse web service and
+campaign management system.  Highlights include:
+
+\begin{achievements}
+\item[-] Designed and implemented a federated service discovery and
+  cluster membership management system for a 500+ node computing system that spans 3
+  datacenters around world;
+\item[-] Created an application for managing advertising campaigns on
+  Facebook using the using the Facebook Ads API;
+\item[-] Maintained the reporting warehouse web service and added several features including an administration interface, persisting and replaying requests functionality, and request failover functionality.
+\end{achievements}
+
+\subsection*{\normalsize IDG Enterprise, Web Architect, Framingham, MA, March 2011 - Janurary 2012}
+
+Publishing industry web application development using Spring MVC 3.0,
+Velocity, Hibernate 3, Resin, Oracle, MySQL, Javascript and HTML. 
+
+Another engineer and I did the backend and jQuery slider plugin
+integration for slideshows on IDG's Java-based sites
+(computerworld.com/slideshows, cio.com/slideshows and
+csoonline.com/slideshows). I also maintained the Maven repository and the
+Jenkins build server.
+
+\subsection*{\normalsize Akiban Technologies, Staff Engineer Boston, MA, October 2009 - July 2010}
+
+\textbf{\normalsize Query Rewrite}
+
+The Akiban database makes use of a schema-mapping module that defines an equivalence relation over the set of tables defined by the administrator.  I designed and implemented an algorithm for rewriting queries such that joins among elements of the same equivalence class are removed from the query.  For more details about this project see \url{http://jpercent.org/query-rewrite}.
+
+\textbf{\normalsize Vertical Store}
+
+The Akiban data model has the drawback of making certain queries exceptionally slow (at least in a world where the database is not entirely in memory).  To mollify the impact of these problematic queries I developed and delivered a working prototype of a column-oriented storage engine.  The design is based on Monet.  For more details about this project see \url{http://jpercent.org/vstore}.
+
+\newpage
+
+\begin{center}{\Large \scshape James Percent}\\
+\end{center}
+
+\subsection*{\normalsize EMC Corporation, Senior Software Engineer \\
+Advanced Technology, Southborough, MA, August 2006 - October 2009}
+\textbf{\normalsize VFCache: A Distributed Block-Level Flash Caching System}
+
+VFCache is a distributed, coherent block-level caching system.  The idea is to extend the storage array onto the server by making use of server-side flash devices.  Highlights include:
+\begin{achievements}
+\item[-]Co-designed distributed caching protocols and cache directory design;
+\item[-]Implemented caching system in the device-mapper layer of the
+  Linux kernel.
+\end{achievements}
+
+\textbf{\normalsize Accelerating the Deduplication Pipeline}
+
+I was responsible for evaluating the viability of using
+system-on-a-chip devices to accelerate computationally intensive
+portions of the deduplication process.  I developed a benchmark-based
+analysis and compared benchmark performance among the following
+platforms: Hifn DR-255, Octeon XL Express NIC, Octeon CN5750, Intel
+Xeon X5355 and Intel P4.  Highlights include:
+\begin{achievements}
+\item[-]Implemented benchmarks using Hifn DR-255 acceleration engines for
+  cryptographic hashing and compression;
+\item[-]Implemented the full deduplication pipeline (chunk, hash, compress) in the Octeon simple
+  executive operating environment;
+\item[-]Developed Linux kernel-mode character driver to interface with
+  the Octeon DMA engines;
+\item[-]Presented results to engineering teams and executives.
+\end{achievements}
+
+\textbf{\normalsize Service Management Framework}
+
+I led the development of the Service Management Framework.  The
+framework consists of a collection of reusable interfaces and
+underlying software layers, which provides the infrastructure
+necessary to seamlessly access, control, simulate and test low-level C
+based abstractions from a Python interface.  Highlights include:
+
+\begin{achievements}
+\item[-]Designed and developed automated introspection and data marshalling system using C++, Python, and XML;
+  \item[-]Designed and co-implemented a binary transport protocol (Python client and C++ Server).
+\end{achievements}
+
+\textbf{\normalsize Common-backend Clustering Service}
+
+Lead designer of a replicated-state-based high availability clustering service.
+
+\subsection*{\normalsize Vanu, Inc., Member of Technical Staff \\
+Cambridge, MA, July 2005 - August 2006} 
+
+I was part of a four person scrum team that over the course of 12
+sprints delivered a C++ based iDEN Base Radio for Sprint-Nextel.
+Additionally, I worked on a National Science Foundation grant,
+Programmable Radio Platforms for Highly Dynamic Networks.  Highlights
+include:
+\begin{achievements}
+\item[-]Developed Link Access Protocol on the D-channel (LAPD) based
+  Base Radio to Site Controller link layer;
+\item[-]Developed a C++ and XML based generic Wireshark/Ethereal dissector for iDEN messages;
+\item[-]Developed QAM64 and QPSK encoders and decoders as well the flow
+  control and bandwidth reservation subsystem;
+\item[-]Researched adaptive channel allocation and opportunistic power
+  algorithms.
+\end{achievements}
+
+\subsection*{\normalsize Hewlett-Packard Company, Nashua, NH, May 2001 - July 2005} 
+I participated in the development cycle of three releases of Tru64 UNIX.  Over the course of my time in Tru64 UNIX I maintained 3 core cluster kernel modules, including the Internode Communications Subsystem (ICS), the Distributed Request Dispatcher (DRD), and the Reflective Memory driver (RM).  
+
+Projects included product enhancements, prototypes, white papers and presentations to executives, engineering teams and customers.  Other daily duties included core-dump triage, bug fixes and analysis, and high priority customer patches.  Highlights include:
+\end{document}
