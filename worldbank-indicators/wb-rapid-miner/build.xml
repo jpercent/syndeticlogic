@@ -1,0 +1,53 @@
+<project name="RapidMiner_Plugin_Tutorial_Unuk">
+	<description>Build file for the RapidMiner Tutorial extension</description>
+	<property environment="env"/>
+
+    <target name="testProps">
+            <echo message="${env.PATH}"/>
+	    </target>
+
+	<property name="rm.dir" location="${env.RM_HOME}" />
+
+	<property name="build.build" location="build" />
+	<property name="build.resources" location="resources" />
+	<property name="build.lib" location="lib" />
+
+	<property name="check.sources" location = "src" />
+	
+	<property name="javadoc.targetDir" location="javadoc" />
+
+	<property name="extension.name" value="World Bank Indicators" />
+	<property name="extension.name.long" value="RapidMiner World Bank Indicators Extension" />
+	<property name="extension.namespace" value="tutorial" />
+    <property name="extension.vendor" value="Syndetic Logic, LLC" />
+    <property name="extension.admin" value="James Percent" />
+    <property name="extension.url" value="www.syndeticlogic.net" />
+
+
+	<property name="extension.needsVersion" value="5.0" />
+	<property name="extension.dependencies" value="" />
+
+	<property name="extension.initClass" value="com.rapidminer.PluginInitTutorial" />
+	<property name="extension.objectDefinition" value="/com/rapidminer/resources/ioobjectsTutorial.xml" />
+	<property name="extension.operatorDefinition" value="/com/rapidminer/resources/OperatorsTutorial.xml" />
+	<property name="extension.parseRuleDefinition" value="/com/rapidminer/resources/parserulesTutorial.xml" />
+	<property name="extension.groupProperties" value="/com/rapidminer/resources/groupsTutorial.properties" />
+	<property name="extension.errorDescription" value="/com/rapidminer/resources/i18n/ErrorsTutorial.properties" />
+	<property name="extension.userErrors" value="/com/rapidminer/resources/i18n/UserErrorMessagesTutorial.properties" />
+	<property name="extension.guiDescription" value="/com/rapidminer/resources/i18n/GUITutorial.properties" />
+
+
+	<!-- Src files -->
+	<path id="build.sources.path">
+		<dirset dir="src/main/java">
+			<include name="**" />
+		</dirset>
+	</path>
+	<fileset dir="src" id="build.sources">
+		<include name="**/*.java" />
+	</fileset>
+	<fileset id="build.dependentExtensions" dir="..">
+	</fileset>
+
+	<import file="${rm.dir}/build_extension.xml" />
+</project>
