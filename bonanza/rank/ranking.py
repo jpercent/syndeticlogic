@@ -78,12 +78,13 @@ class CSRankingBuilder(RankingBuilder):
     def __init__(self, params):
         super(CSRankingBuilder, self).__init__()
         self.params = params
-    def add_terms(self, terms, vector):
-        for offset, term in enumerate(terms, 0):
+    def add_terms(self, terms, vector, offset):
+        for term in terms:
             vector.add_term(term, offset)
     def add_sentence(self, sentence, vector):
-        self.add_terms(sentence.split(), vector)                
+        self.add_terms(sentence.split(), vector, -1)                
     def add_query(self, query):
+#        print "query ", query
         self.query = query
         qm = QueryModel(query, self.params)
         qm.compute_scores = qm.cosine_scores
@@ -92,7 +93,12 @@ class CSRankingBuilder(RankingBuilder):
         self.url = UrlModel(url, self.query, self.params)
         current = self.queries[self.query]
         current.add_url(self.url)
-        self.add_terms(re.sub(r'\W', ' ', url).split(), self.url.url_vec)
+        self.add_terms(re.sub(r'\W', ' ', url).split(), self.url.url_vec, -1)
+        self.uoffset = 0
+        self.toffset = 0
+        self.hoffset = 0
+        self.buoffset = 0
+        self.aoffset = 0
     def add_title(self, title):
         self.add_sentence(title, self.url.title_vec)
     def add_header(self, header):
@@ -102,11 +108,12 @@ class CSRankingBuilder(RankingBuilder):
         term = temp[0].strip()
         postings = temp[1].strip().split()
         for offset in postings:
-            self.url.body_hits_vec.add_term(term, offset)
+            self.url.body_hits_vec.add_term(term, int(offset))
     def add_body_length(self, body_length):
         self.url.body_length = int(body_length)
     def add_anchor_text(self, anchor_text):
         self.anchor_text = anchor_text
+        self.url.anchors_vec.reset_window()
     def add_anchor_count(self, anchor_count):
         for anchor in self.anchor_text.split():
             for i in range(int(anchor_count)):
@@ -129,7 +136,7 @@ class QueryModel(object):
     def __init__(self, q, p):
         self.query = q
         self.params = p
-        self.query_vec = CSQueryVector(q, p.tf_computer, p.N, p.idf_hash, p.stem)
+        self.query_vec = QueryVector(q, p.tf_computer, p.N, p.idf_hash, p.stem)
         self.urls = []
         self.url_len = 0
         self.title_len = 0 
@@ -168,11 +175,28 @@ class UrlModel(object):
         self.url = u
         self.query_vec = q.split()
         self.params = p
-        self.url_vec = CSDocumentVector(p, q)
-        self.title_vec = CSDocumentVector(p, q)
-        self.headers_vec = CSDocumentVector(p, q)
-        self.body_hits_vec = CSDocumentVector(p, q)
-        self.anchors_vec = CSDocumentVector(p, q)
+        self.url_vec = DocumentVector(p, q)
+        self.title_vec = DocumentVector(p, q)
+        self.headers_vec = DocumentVector(p, q)
+        self.body_hits_vec = DocumentVector(p, q)
+        self.anchors_vec = DocumentVector(p, q)
+    def compute_boost(self):
+        smallest_list = [self.url_vec.smallest_window(), self.title_vec.smallest_window(),
+                         self.headers_vec.smallest_window(), self.body_hits_vec.smallest_window(),
+                         self.anchors_vec.smallest_window()]
+        heapq.heapify(smallest_list)
+        smallest = -1
+        while len(smallest_list) > 0 and smallest == -1:
+            smallest = heapq.heappop(smallest_list)
+        if smallest != -1:
+            assert smallest >= len(self.query_vec)
+            if smallest == len(self.query_vec):
+                boost = self.params.boost
+            else:
+                boost = 1/float(smallest) * self.params.boost
+        else:
+            boost = 1
+        return boost
     def cosine_score(self, query_vec):
         assert query_vec == query_vec
         u = [self.params.up * e for e in self.url_vec.tfnorm_value(self.body_length)]
@@ -189,7 +213,7 @@ class UrlModel(object):
         score = 0
         for i in range(len(v)):
             score += v[i]*v1[i]
-        return score
+        return score + self.compute_boost()
     def bm25f_score(self, average_lens):
         self.url_vec.avg_len = average_lens.url_len
         self.title_vec.avg_len = average_lens.title_len
@@ -207,40 +231,100 @@ class UrlModel(object):
         score = 0
         for i in range(len(term_scores)):
             w_dt = term_scores[i]
-            score += ((w_dt * self.params.idf_hash[self.query_vec[i]]) / float((self.params.K + w_dt) + self.params.V(self.page_rank))) 
-        return score
+            score += ((w_dt * self.params.idf_hash[self.query_vec[i]]) / float((self.params.K + w_dt) + self.params.V(self.page_rank)))
+        return score + self.compute_boost()
             
             
 class SmallestWindowComputer(object):
     def __init__(self, query):
         self.window = []
-        self.query = { term : index for index, term in enumerate(query.split(), 0) }
+        self.query = query.split()
+        self.reset()        
+    def reset(self):
+        self.window = {term : [] for term in self.query}
     def add_term(self, term, current_offset):
-        if not term in self.query.keys():
+        if not term in self.query:
             return
-        new_entry = ([term for term in self.query.values()], current_offset)
-        for i in range(len(self.window)):
-            terms, start_offset = self.window[i]
-            if len(terms) > 0 and term in terms:
-                terms.remove(term)
-                if len(terms) == 0:
-                    distance = current_offset - start_offset
-                    self.window[i] = (terms, distance)
-        self.window.append(new_entry)
-    def min(self):
-        min = -1
-        for terms, distance in window:
-            if len(terms) == 0:
-                if min == -1 or distance < min:
-                    min = distance
-        return min
+        else:
+            self.window[term].append(current_offset)
+    def is_hash_filled(self, hash_values):
+        filled = True
+        for value in hash_values:
+            if value == None:
+                filled = False
+                break
+        return filled
+    def compute_min(self, term_values, current_min):
+        minv = sys.maxint
+        maxv = -1
+        for v in term_values:
+            if minv > v:
+                minv = v
+            if maxv < v:
+                maxv = v
+        
+        new_v = (maxv+1) - minv
+        if new_v < current_min:
+            current_min = new_v
+        assert current_min >= len(self.query)
+        return current_min
+    def get_next(self, offset_lists):
+        ret_term = None
+        offset = None
+        for i in range(len(offset_lists)):
+            term, offsets, index = offset_lists[i]
+            if index < len(offsets):
+                if offset == None or offsets[index] < offset:
+                    ret_term = term
+                    offset = offsets[index]
+                    ret_offsets = offsets
+                    reset_index = index + 1
+                    list_index = i
+        if ret_term != None:
+            offset_lists[list_index] = ret_term, ret_offsets, reset_index
+        return ret_term, offset
+    def create_min_search_lists(self):
+        offset_lists = []
+        for term, offsets in self.window.iteritems():
+            if len(offsets) == 0:
+                return None, None, True
+            else:
+                offsets.sort()
+                offset_lists.append((term, offsets, 0))
+        terms_map = {term : None for term in self.query }
+        return terms_map, offset_lists, False
+    def compute_smallest_window(self):
+        current_min = sys.maxint
+        terms_map, offset_lists, done = self.create_min_search_lists()
+        if done:
+            return -1
+        filled = False
+        while True:
+            term, offset = self.get_next(offset_lists)
+            if term == None:
+                break
+            if terms_map[term] == None:
+                terms_map[term] = offset
+                filled = self.is_hash_filled(terms_map.values())
+                if filled:
+                    current_min = self.compute_min(terms_map.values(), current_min)
+            elif terms_map[term] != None and not filled:
+                terms_map[term] = offset
+            else:
+                assert terms_map[term] != None and filled
+                terms_map[term] = offset
+                new_min = self.compute_min(terms_map.values(), current_min)
+                if new_min < current_min:
+                    current_min = new_min
+        assert current_min >= len(self.query)
+        return current_min
     def suspend(self):
         self.min = lambda : -1
-        self.add_term = lambda term: term
-        
-        
-class CSDocumentVector(object):
-    def __init__(self, params, query, compute_smallest_window=False):
+        self.add_term = lambda term, offset: term
+            
+            
+class DocumentVector(object):
+    def __init__(self, params, query):
         self.tf = {}
         self.stem = params.stem
         self.B = params.B
@@ -249,24 +333,37 @@ class CSDocumentVector(object):
             self.tf[self.stem(unicode(term, 'utf-8'))] = 0
         self.tf_computer = params.tf_computer
         self.bsmooth = params.bsmooth
+        self.query = query
         self.sw_computer = SmallestWindowComputer(query)
-        if not compute_smallest_window:
+        self.smallest = -1
+        self.offset = 0
+        if not params.compute_smallest_window:
             self.sw_computer.suspend()
     def smallest_window(self):
-        return self.sw_computer.min()
+        self.reset_window()
+        return self.smallest
+    def reset_window(self):        
+        candidate = self.sw_computer.compute_smallest_window()
+        if self.smallest == -1 or self.smallest > candidate:
+            self.smallest = candidate
+        self.sw_computer.reset()
+        self.offset = 0
     def add_term(self, term, offset):
         term = self.stem(unicode(term, 'utf-8'))
         if term in self.tf:
             self.tf[term] += 1
         self.field_len += 1
-        self.sw_computer.add_term(term)
+        self.offset += 1
+        if offset == -1:
+            offset = self.offset
+        self.sw_computer.add_term(term, offset)
     def tfnorm_value(self, body_length):
         return [self.tf_computer(self.tf[term])/float(body_length + self.bsmooth) for term in self.tf.keys()]
     def bm25f_value(self):
         return [self.tf[term] / (1 + self.B + (self.field_len/float(self.avg_len))) for term in self.tf.keys()]
-        
-        
-class CSQueryVector(object):
+            
+            
+class QueryVector(object):
     def __init__(self, query, tf_computer, N, idf_hash, stem):
         self.query = query
         self.tf_computer = tf_computer
@@ -287,7 +384,7 @@ class CSQueryVector(object):
             
             
 class VectorParameters(object):
-    def __init__(self, up=.2, tp=.5, bp=.1, hp=1.1, ap=1111, bsmooth=1.1, B=1, K=1, lam=2, compute_smallest_window=False):
+    def __init__(self, up, tp, bp, hp, ap, bsmooth, compute_smallest_window, boost, B, K, lam):
         self.up = up
         self.tp = tp
         self.bp = bp
@@ -304,11 +401,13 @@ class VectorParameters(object):
         self.lam = lam
         self.N, self.idf_hash = idf_gen.read_idf_file('./')
         self.stemmer = snowball.EnglishStemmer()
+        self.boost = boost
         self.compute_smallest_window = compute_smallest_window
+
     def logLambdaV(self, page_rank):
         return math.log10(params.lam+.1) + math.log10(page_rank+self.bsmooth)
     def logV(self, page_rank):
-        return math.log10(float(page_rank+self.bsmooth))
+        return math.log10(float(page_rank+self.bsmooth)) * self.lam
     def fracV(self, page_rank):
         return page_rank / (self.lam + page_rank)
     def snowball_stemmer(self):
@@ -322,44 +421,12 @@ class VectorParameters(object):
             return 1
         else:
             return 1 + math.log10(count)
-            
-            
-class VectorFactory:
-    def __init__(self):
-        self.up = 1
-        self.tp = 1
-        self.bp = 1
-        self.hp = 1
-        self.ap = 1
-        self.bsmooth = float(1.1)
-        self.B = 1
-        self.K = 1
-        self.lam = 1
-        self.smallest_window = False
-    def default_vec(self):
-        return VectorParameters(compute_smallest_window = self.smallest_window)
-    def next_vec(self):
-        raise "Unsupported"
-        
-        
+
 class Ranker:
-    def __init__(self, help_fn, optimize, ranking, output):
-        self.vf = VectorFactory()
-        if optimize:
-            self.create_vec = self.vf.next_vec
-        else:
-            self.create_vec = self.vf.default_vec 
-        if ranking == 'cosine' and optimize == True:
-            self.run = self.tuning_run
-            self.create_builder_fn = self.create_cosine_builder
-        elif ranking == 'bm25f' and optimize == True:
-            self.run = self.tuning_run
-            self.create_builder_fn = self.create_bm25f_builder
-        elif ranking == 'cosine':
-            self.run = self.single_run
+    def __init__(self, help_fn, ranking, output, params):
+        if ranking == 'cosine':
             self.create_builder_fn = self.create_cosine_builder
         elif ranking == 'bm25f':
-            self.run = self.single_run
             self.create_builder_fn = self.create_bm25f_builder
         else:
             print "ERROR ", ranking, " is an unsupported algorithm"
@@ -368,31 +435,27 @@ class Ranker:
         if output == '':
             self.output = sys.stdout
         else:
-            self.output = open(output, 'w')    
+            self.output_file = output
+            self.output = open(output, 'w')
+        self.params = params
+        self.params.tf_computer = self.params.linear_tf
+        self.params.stem = self.params.no_stemmer()
+
     def create_bm25f_builder(self):
-        params = VectorParameters()
-        params.tf_computer = params.linear_tf
-        params.stem = params.no_stemmer()
-        params.V = params.logV
-        builder = BM25FRankingBuilder(params)
+        self.params.V = self.params.logV
+        builder = BM25FRankingBuilder(self.params)
         return builder
     def create_cosine_builder(self):
-        params = VectorParameters()
-        params.tf_computer = params.linear_tf
-        params.stem = params.no_stemmer()
-        builder = CSRankingBuilder(params)
+        builder = CSRankingBuilder(self.params)
         return builder
-    def single_run(self, featureFile):
+    def run(self, feature_file):
         builder = self.create_builder_fn()
-        (queries, features) = builder.extractFeatures(featureFile)
+        (queries, features) = builder.extractFeatures(feature_file)
         rankings = [queries[query].compute_scores() for query in queries.keys()]
         for scores in rankings:
             print >> self.output, "query: "+scores[0]
             while len(scores[1]) > 0:
                 print >> self.output, "  url: " + heapq.heappop(scores[1])[1]
-    def tuning_run(self):
-        pass
-            
             
 if __name__=='__main__':
     args = None
@@ -401,16 +464,40 @@ if __name__=='__main__':
     scoring_help = 'sets the scoring algorithm that will be used; valid values are bm25f and cosine'
     results_help = 'path to the file containing the search results'
     output_help = 'path to the output file containing the rankings'
-    opt_help = 'runs the by experiments trying to automatically tune the parameters'
     window_help = 'turns on smallest window calculation'
     parser.add_option("-s", "--scoring", default='', type=str, dest="scoring", metavar="ALGORITM", help=scoring_help)
     parser.add_option("-r", "--results", default='', type=str, dest="results", metavar="RESULTS", help=results_help)
     parser.add_option("-o", "--output", default='', type=str, dest="output", metavar="OUTPUT", help=output_help)
-    parser.add_option("-t", "--optimize", action="store_true", dest="optimize", default=False, metavar="OPT", help=opt_help)
     parser.add_option("-w", "--smallest-window", action="store_true", dest="window", default=False, metavar="WINDOW", help=window_help)
     (options, args) = parser.parse_args()
     if options.scoring == '' or options.results == '':
         parser.print_help()
         sys.exit(1)
-    ranker = Ranker(parser.print_help, options.optimize, options.scoring, options.output)        
+        
+    boost = 1
+    bsmooth = 1.1
+    window = False
+    if options.scoring == 'cosine':
+        up = 1
+        tp = 511
+        bp = .05
+        hp = 20000
+        ap = 1111111
+        B = 1
+        K = 1
+        lam = 1
+    elif options.scoring == 'bm25f':
+        up = 1000
+        tp = 1110
+        bp = 0.05
+        hp = 2000
+        ap = 1111111
+        B  = 1
+        K = 200
+        lam = 1
+        
+    if options.window:
+        boost = 11111        
+    params = VectorParameters(up, tp, bp, hp, ap, bsmooth,  options.window, boost, B, K, lam)
+    ranker = Ranker(parser.print_help, options.scoring, options.output, params)        
     ranker.run(options.results)
