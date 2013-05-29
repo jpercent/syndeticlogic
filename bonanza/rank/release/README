@@ -1,0 +1,39 @@
+This folder contains the following files:
+
+1. Data
+  a. queryDocTrainData.(train|dev) & queryDocTrainRel.(train|dev): training data as in PA3 but we split into training and development sets.
+  
+  b. df.txt: document frequency file with list all words in PA1 corpus together with their frequencies (note the total number of documents is 98998). You are free to use your df/idf files in PA3.
+
+2. Helper code 
+  a. l2r.py
+     This is a baseline skeleton code provided for your help. It contains stub functions that you need to implement. Running as follows:
+       $ python l2r.py queryDocTrainData.train queryDocTrainRel.train <test_data_file> <task> > ranked.txt
+
+     <test_data_file>: test data file, e.g., "queryDocTrainData.dev". 
+     <task>: either 1 (Task 1), 2 (Task 2), 3 (Task 3) or 4 (Extra Credit). 
+	 (Set <task> to 0 to get started and familiarize yourself with the script.)
+  
+  b. ndcg.py
+     This is the code for calculating the ndcg score of your ranking algorithm. You can run the code as follows:
+       $ python ndcg.py <rank_output_file> <test_rel_file>
+       
+    <rank_output_file>: the file produced by step (a), e.g., ranked.txt.
+    <test_rel_file>: test relevance file, e.g., "queryDocTrainRel.dev".
+
+3. l2r.sh
+   This is the script we will be calling to execute your program. Execute it as follows: 
+       $ ./l2r.sh <task> <test_data_file>
+	
+   <task>: either 1 (Task 1), 2 (Task 2), 3 (Task 3), or 4 (Extra Credit). 
+   <train_data_file>: has the same format as files queryDocTrainData.(train|dev)
+   You can use any language to do the assignment and could modify the script as long as the following requirements are satisfied:
+     - l2r.sh should work with the parameters as mentioned above.
+     - l2r.sh should output ranking results to stdout in the format that will be graded .
+     - your code can take any number of extra arguments, the script should only take these two.
+
+4. submit.py
+   This is the submit script used for the assignment. Please submit each task individually. In order to submit a task, simply run the following command:
+       $ python submit.py
+
+   Note that Tasks 1/2/3 are parts of the requirement for the assignment and 4 is for extra credit (optional). The report should be present in the same folder with the name "report.pdf".
