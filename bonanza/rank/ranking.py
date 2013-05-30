@@ -421,7 +421,8 @@ class VectorParameters(object):
             return 1
         else:
             return 1 + math.log10(count)
-
+            
+            
 class Ranker:
     def __init__(self, help_fn, ranking, output, params):
         if ranking == 'cosine':
@@ -439,8 +440,7 @@ class Ranker:
             self.output = open(output, 'w')
         self.params = params
         self.params.tf_computer = self.params.linear_tf
-        self.params.stem = self.params.no_stemmer()
-
+        self.params.stem = self.params.no_stemmer()        
     def create_bm25f_builder(self):
         self.params.V = self.params.logV
         builder = BM25FRankingBuilder(self.params)
@@ -456,7 +456,8 @@ class Ranker:
             print >> self.output, "query: "+scores[0]
             while len(scores[1]) > 0:
                 print >> self.output, "  url: " + heapq.heappop(scores[1])[1]
-            
+                
+                
 if __name__=='__main__':
     args = None
     options = None
