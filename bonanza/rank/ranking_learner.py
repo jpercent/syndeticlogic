@@ -1,65 +1,119 @@
 #!/usr/bin/env python
 
-### Module imports ###
 import sys
 import math
 import re
 import numpy as np
 from sklearn import linear_model, svm
+from ranking import RankingBuilder
+from optparse import OptionParser
+from sklearn import preprocessing
+from os.path import join, abspath
+from ranking import *
+from itertools import combinations
 
-class PointwiseLinearRegression(object):
+class LearnToRank(object):
   def __init__(self, training_data, relevance, test_data):
     self.training_data = training_data
-    self.relevence = relevence
+    self.relevance = relevance
     self.test_data = test_data
     self.model = linear_model.LinearRegression()
-    self.training_features = None
-    self.query_doc_vectors = None
-    self.class_labels = [0,1,3]
-  def train(self):#,train_data_file, train_rel_file):
-    X = [[0, 0], [1, 1], [2, 2]]
-    y = [0, 1, 2]
-    return (X, y)
- 
-  def extract_testing_features(self):#, test_data_file):
-    X = [[0.5, 0.5], [1.5, 1.5]]  
-    queries = ['query1', 'query2']
-  
-  # index_map[query][url] = i means X[i] is the feature vector of query and url
-    index_map = {'query1' : {'url1':0}, 'query2': {'url2':1}}
-    return (X, queries, index_map)
- 
-  def learn(self, X, y):
-    self.model.fit(X,y)
-
-  def test(X):
-    return self.model.predict(X) #[0.5, 1.5]
-
-class PairwiseSupportVectorMachine(object):
-  def __init__(self):
-    pass
-  def pairwise_train_features(self, train_data_file, train_rel_file):
-    X = [[0, 0], [1, 1], [2, 2]]
-    y = [0, 1, 2]
-    return (X, y)
-
-  def pairwise_test_features(self, test_data_file):
-    # stub, you need to implement
-    X = [[0.5, 0.5], [1.5, 1.5]]  
-    queries = ['query1', 'query2']
-    # index_map[query][url] = i means X[i] is the feature vector of query and url
-    index_map = {'query1' : {'url1':0}, 'query2': {'url2':1}}
-    return (X, queries, index_map)
-
-  def pairwise_learning(self, X, y):
-    # stub, you need to implement
-    model = svm.SVC(kernel='linear', C=1.0)
-    return model
-
-  def pairwise_testing(self, X, model):
-    # stub, you need to implement
-    y = [0.5, 1.5]
-    return y
+    self.params = VectorParameters(1, 1, 1, 1, 1, 1.1,  False, 1, 1, 1, 1)
+    self.params.tf_computer = self.params.linear_tf
+    self.params.stem = self.params.no_stemmer()  
+  def training_prep(self):
+    self.builder = BM25FRankingBuilder(self.params)
+    self.builder.extractFeatures(self.training_data)
+    f = open(self.relevance, 'r')
+    for line in f:
+      key = line.split(':', 1)[0].strip()
+      value = line.split(':', 1)[-1].strip()
+      if key == 'query':
+        query_str = value
+        continue
+      else:
+        assert key == 'url'
+        url_str = value.split(' ', 1)[0].strip()
+        rel = float(value.split(' ', 1)[-1].strip())
+          
+      query = self.builder.queries[query_str]
+      found = False
+      for url in query.urls:
+        if url_str == url.url:
+          url.rel = rel
+          found = True
+      if not found:
+        s = "Query, URL "+query_str+":"+url_str+" not found "
+        raise s
+  def make_vectors(self):
+    self.scores = []
+    self.classes = []
+    for query, model in self.builder.queries.items():
+      self.scores = model.tf_idf_scores(self.scores)
+      self.classes.extend(model.rels())
+  def test(self):
+    self.builder = BM25FRankingBuilder(self.params)
+    self.builder.extractFeatures(self.test_data)
+    for query, query_model in self.builder.queries.items():
+      scores = query_model.tf_idf_scores([])
+      scores = self.preprocess(scores)
+      labels = self.predict(scores)
+      assert len(query_model.urls) == len(labels)
+      query_model.ranking = []
+      for i in range(len(labels)):
+        heapq.heappush(query_model.ranking, (labels[i], query_model.urls[i].url))
+    self.query_models = self.builder.queries
+  def predict(self, scores):
+    return self.model.predict(scores)
+  def preprocess(self, scores):
+    return scores
+      
+      
+class PairwiseSupportVectorMachine(LearnToRank):
+  def __init__(self, training_data, relevance, test_data):
+    super(PairwiseSupportVectorMachine, self).__init__(training_data, relevance, test_data)
+    self.model = svm.SVC(kernel='linear', C=1.0)
+  def train(self):
+    self.training_prep()
+    self.make_vectors()
+    print self.scores[0], self.scores[1]
+    assert len(self.scores) == len(self.classes)
+    scaled = preprocessing.scale(self.scores)
+    print scaled[0], scaled[1]
+    indexes = tuple(combinations([i for i in range(len(scaled))], 2))
+    classes1 = []
+    diffed_scaled_scores = []
+    for first, second in indexes:
+      if self.classes[first] > self.classes[second]:
+        classes1.append(1)
+      else:
+        classes1.append(-1)
+      diffed_scaled_scores.append(self.difference(scaled[first], scaled[second]))
+    self.scores = diffed_scaled_scores
+    self.classes = classes1
+    self.model.fit(self.scores, self.classes)
+  def difference(self, v, v1):
+    assert len(v) == len(v1)
+    ret = []
+    for i in range(len(v)):
+      ret.append((v[i] - v1[i]))
+    return ret
+  def test(self):
+    self.preprocess = preprocessing.scale
+    super(PairwiseSupportVectorMachine, self).test()
+#  def predict(self, scores):
+#    import numpy as np
+##        weights = model.coef_  
+#    weights = self.model.coef_ / np.linalg.norm(self.model.coef_)
+#    return [np.dot(score, weights) for score in scores]  
+#    
+class PointwiseLinearRegression(LearnToRank):
+  def __init__(self, training_data, relevance, test_data):
+    super(PointwiseLinearRegression, self).__init__(training_data, relevance, test_data)
+  def train(self):
+    self.training_prep()
+    self.make_vectors()
+    self.model.fit(self.scores, self.classes)
     
     
 class RankingLearner(object):
@@ -68,76 +122,12 @@ class RankingLearner(object):
     self.output = output
     self.rankings = None
   def rank(self):
-    #sys.stderr.write('\n## Training with feature_file = %s, rel_file = %s ... \n' % (train_data_file, train_rel_file))
     self.classifier.train()
-    self.rankings = self.classifier.test()
-  def write_rankings(self):
-    assert self.rankings != None
-    self.output_stream.write(self.rankings)
-    
-  def train(self, train_data_file, train_rel_file, task):
-    if task == 1:
-      # Step (1): construct your feature and label arrays here
-      (X, y) = pointwise_train_features(train_data_file, train_rel_file)
-      # Step (2): implement your learning algorithm here
-      model = pointwise_learning(X, y)
-    elif task == 2:
-      # Step (1): construct your feature and label arrays here
-      (X, y) = pairwise_train_features(train_data_file, train_rel_file)
-      # Step (2): implement your learning algorithm here
-      model = pairwise_learning(X, y)
-    elif task == 3: 
-      # Add more features
-      print >> sys.stderr, "Task 3\n"
-    elif task == 4: 
-      # Extra credit 
-      print >> sys.stderr, "Extra Credit\n"
-    else: 
-      X = [[0, 0], [1, 1], [2, 2]]
-      y = [0, 1, 2]
-      model = linear_model.LinearRegression()
-      model.fit(X, y)
-    # some debug output
-    weights = model.coef_
-    print >> sys.stderr, "Weights:", str(weights)
-    return model 
-  def test(test_data_file, model, task):
-    sys.stderr.write('\n## Testing with feature_file = %s ... \n' % (test_data_file))
-    if task == 1:
-      # Step (1): construct your test feature arrays here
-      (X, queries, index_map) = pointwise_test_features(test_data_file)
-      
-      # Step (2): implement your prediction code here
-      y = pointwise_testing(X, model)
-    elif task == 2:
-      # Step (1): construct your test feature arrays here
-      (X, queries, index_map) = pairwise_test_features(test_data_file)
-    
-      # Step (2): implement your prediction code here
-      y = pairwise_testing(X, model)
-    elif task == 3: 
-      # Add more features
-      print >> sys.stderr, "Task 3\n"
-
-    elif task == 4: 
-      # Extra credit 
-      print >> sys.stderr, "Extra credit\n"
-
-    else:
-      queries = ['query1', 'query2']
-      index_map = {'query1' : {'url1':0}, 'query2': {'url2':1}}
-      X = [[0.5, 0.5], [1.5, 1.5]]  
-      y = model.predict(X)
-  
-    # some debug output
-    for query in queries:
-      for url in index_map[query]:
-        print >> sys.stderr, "Query:", query, ", url:", url, ", value:", y[index_map[query][url]]
-
-    # Step (3): output your ranking result to stdout in the format that will be scored by the ndcg.py code
-
-def classifier_factory_method(fn, options):
-  return fn(options.training_data, options.relevence_data, options.test_data)
+    self.classifier.test()
+    for query, query_model in self.classifier.query_models.items():
+      print >> self.output, "query: "+query
+      while len(query_model.ranking) > 0:
+        print >> self.output, "  url: " + heapq.heappop(query_model.ranking)[1]
 
 if __name__ == '__main__':
   sys.stderr.write('# Input arguments: %s\n' % str(sys.argv))
@@ -145,50 +135,37 @@ if __name__ == '__main__':
   options = None
   parser = OptionParser()
   training_data_help = 'training data'
-  relevence_data_help = 'relevence data'
+  relevance_help = 'relevance data'
   test_data_help = 'test data'
+  output_help = 'path to the output file containing the rankings'
   classifier_help = 'indicates which classifier to use; value of 1 = pointwise Linear Regression; value of 2 = pairwise Support Vector Machine (SVM); and value 3 = SVM with addition, experimental features'
   parser.add_option("-t", "--training-data", default='', type=str, dest="training_data", metavar="TRAINING-DATA", help=training_data_help)
-  parser.add_option("-r", "--relevence", default='', type=str, dest="relevence_data", metavar="RELEVENCE", help=relevence_help)
+  parser.add_option("-r", "--relevance", default='', type=str, dest="relevance_data", metavar="RELEVENCE", help=relevance_help)
   parser.add_option("-e", "--test-data", default='', type=str, dest="test_data", metavar="TEST-DATA", help=test_data_help)
   parser.add_option("-c", "--classifier", default=2, type=int, dest="classifier",  metavar="CLASSIFIER", help=classifier_help)
+  parser.add_option("-o", "--output", default='', type=str, dest="output", metavar="OUTPUT", help=output_help)
   (options, args) = parser.parse_args()
-  if options.training_data == '' or options.relevence_data == '' or options.test_data == '':
+  if options.training_data == '' or options.relevance_data == '' or options.test_data == '':
     parser.print_help()
     sys.exit(1)
     
   if options.classifier == 1:
-    classifier = classifier_factory_method(PointwiseLinearRegression.__init__, options)
+    classifier = PointwiseLinearRegression(options.training_data, options.relevance_data, options.test_data)
   elif options.classifier == 2:
-    classifier = classifier_factory_method(PairwiseSupportVectorMachine.__init__, options)
+    classifier = PairwiseSupportVectorMachine(options.training_data, options.relevance_data, options.test_data)
   elif options.classifier == 3: 
-    # Add more features
     print >> sys.stderr, "Task 3\n"
     classifier = classifier_factory_method(PairwiseSupportVectorMachine.__init__, options)
   elif options.classifier == 4: 
-    # Extra credit 
     print >> sys.stderr, "Extra credit\n"
     classifier = classifier_factory_method(PairwiseSupportVectorMachine.__init__, options)
   else:
     raise "ERROR"
-    queries = ['query1', 'query2']
-    index_map = {'query1' : {'url1':0}, 'query2': {'url2':1}}
-    X = [[0.5, 0.5], [1.5, 1.5]]  
-    y = model.predict(X)
+
+  if options.output == '':
+    output = sys.stdout
+  else:
+    output = open(options.output, 'w')
     
-  #if len(sys.argv) != 5:
-  #  print >> sys.stderr, "Usage:", sys.argv[0], "train_data_file train_rel_file test_data_file task"
-  #  sys.exit(1)
-  
-  learner = RankingLearner(classifier)
-  learner.compute_rankings()
-  learner.write_rankings()
-  
-  #train_data_file = sys.argv[1]
-  #train_rel_file = sys.argv[2]
-  #test_data_file = sys.argv[3]
-  #task = int(sys.argv[4])
-  print >> sys.stderr, "### Running task", task, "..."
-  #model = train(train_data_file, train_rel_file, task)
-  
-  #test(test_data_file, model, task)
+  learner = RankingLearner(classifier, output)
+  learner.rank()

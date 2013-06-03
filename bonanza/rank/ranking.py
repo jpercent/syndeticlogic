@@ -145,6 +145,15 @@ class QueryModel(object):
         self.anchors_len = 0
     def add_url(self, url):
         self.urls.append(url)
+    def rels(self):
+        return [url.rel for url in self.urls]
+    def query_urls(self):
+        return [(self.query, url) for url in self.urls ]
+    def tf_idf_scores(self, scores):
+        for url in self.urls:
+            url.compute_boost = url.noboost
+            scores.append(url.tf_idf_scores(self.query_vec))
+        return scores
     def cosine_scores(self):
         scores = []
         for url in self.urls:
@@ -180,6 +189,8 @@ class UrlModel(object):
         self.headers_vec = DocumentVector(p, q)
         self.body_hits_vec = DocumentVector(p, q)
         self.anchors_vec = DocumentVector(p, q)
+    def noboost(self):
+        return 0.0
     def compute_boost(self):
         smallest_list = [self.url_vec.smallest_window(), self.title_vec.smallest_window(),
                          self.headers_vec.smallest_window(), self.body_hits_vec.smallest_window(),
@@ -197,8 +208,18 @@ class UrlModel(object):
         else:
             boost = 1
         return boost
+    def tf_idf_scores(self, query_vec):
+        u = [e for e in self.url_vec.tfnorm_value(self.body_length)]
+        t = [e for e in self.title_vec.tfnorm_value(self.body_length)]
+        h = [e for e in self.headers_vec.tfnorm_value(self.body_length)]
+        bh = [e for e in self.body_hits_vec.tfnorm_value(self.body_length)]
+        a = [e for e in self.anchors_vec.tfnorm_value(self.body_length)]
+        fields = [u, t, h, bh, a]
+        lu = len(u)
+        assert lu == len(t) and len(h) == lu and len(bh) == lu and len(a) == lu
+        doc_query_tf_idf_vec = [self.dot(field_vec, query_vec.value()) for field_vec in fields]
+        return doc_query_tf_idf_vec
     def cosine_score(self, query_vec):
-        assert query_vec == query_vec
         u = [self.params.up * e for e in self.url_vec.tfnorm_value(self.body_length)]
         t = [self.params.tp * e for e in self.title_vec.tfnorm_value(self.body_length)]
         h = [self.params.hp * e for e in self.headers_vec.tfnorm_value(self.body_length)]
