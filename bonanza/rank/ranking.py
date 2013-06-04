@@ -159,8 +159,7 @@ class QueryModel(object):
         for url in self.urls:
             heapq.heappush(scores, (-1*url.cosine_score(self.query_vec), url.url))
         return (self.query, scores)
-    def bm25f_scores(self):
-        scores = []
+    def compute_average_lens(self):
         for url in self.urls:
             self.add_lens(url)
         self.url_len = self.url_len+self.params.bsmooth/ float(len(self.urls))
@@ -168,15 +167,19 @@ class QueryModel(object):
         self.headers_len = self.headers_len+self.params.bsmooth/ float(len(self.urls))
         self.body_hits_len = self.body_hits_len+self.params.bsmooth/ float(len(self.urls))
         self.anchors_len = self.anchors_len+self.params.bsmooth/ float(len(self.urls))
-        for url in self.urls:
-           heapq.heappush(scores, (-1*url.bm25f_score(self), url.url))
-        return (self.query, scores)
     def add_lens(self, url):
         self.url_len += url.url_vec.field_len
         self.title_len += url.title_vec.field_len 
         self.headers_len += url.headers_vec.field_len 
         self.body_hits_len += url.body_hits_vec.field_len 
-        self.anchors_len += url.anchors_vec.field_len 
+        self.anchors_len += url.anchors_vec.field_len         
+    def bm25f_scores(self):
+        scores = []
+        self.compute_average_lens()
+        for url in self.urls:
+           heapq.heappush(scores, (-1*url.bm25f_score(self), url.url))
+        return (self.query, scores)
+
             
             
 class UrlModel(object):
@@ -189,6 +192,10 @@ class UrlModel(object):
         self.headers_vec = DocumentVector(p, q)
         self.body_hits_vec = DocumentVector(p, q)
         self.anchors_vec = DocumentVector(p, q)
+        if p.norm == True:
+            self.tf_idf_scores = self.norm_tf_idf_scores
+        else:
+            self.tf_idf_scores = self.raw_tf_idf_scores
     def noboost(self):
         return 0.0
     def compute_boost(self):
@@ -208,7 +215,18 @@ class UrlModel(object):
         else:
             boost = 1
         return boost
-    def tf_idf_scores(self, query_vec):
+    def raw_tf_idf_scores(self, query_vec):
+        u = [e for e in self.url_vec.tfraw_value()]
+        t = [e for e in self.title_vec.tfraw_value()]
+        h = [e for e in self.headers_vec.tfraw_value()]
+        bh = [e for e in self.body_hits_vec.tfraw_value()]
+        a = [e for e in self.anchors_vec.tfraw_value()]
+        fields = [u, t, h, bh, a]
+        lu = len(u)
+        assert lu == len(t) and len(h) == lu and len(bh) == lu and len(a) == lu
+        doc_query_tf_idf_vec = [self.dot(field_vec, query_vec.value()) for field_vec in fields]
+        return doc_query_tf_idf_vec        
+    def norm_tf_idf_scores(self, query_vec):
         u = [e for e in self.url_vec.tfnorm_value(self.body_length)]
         t = [e for e in self.title_vec.tfnorm_value(self.body_length)]
         h = [e for e in self.headers_vec.tfnorm_value(self.body_length)]
@@ -218,6 +236,9 @@ class UrlModel(object):
         lu = len(u)
         assert lu == len(t) and len(h) == lu and len(bh) == lu and len(a) == lu
         doc_query_tf_idf_vec = [self.dot(field_vec, query_vec.value()) for field_vec in fields]
+        #doc_query_tf_idf_vec.append(self.page_rank)
+        #doc_query_tf_idf_vec.append(self.cosine_score(query_vec))
+        #doc_query_tf_idf_vec.append(self.bm25f_score(query_vec))
         return doc_query_tf_idf_vec
     def cosine_score(self, query_vec):
         u = [self.params.up * e for e in self.url_vec.tfnorm_value(self.body_length)]
@@ -254,6 +275,48 @@ class UrlModel(object):
             w_dt = term_scores[i]
             score += ((w_dt * self.params.idf_hash[self.query_vec[i]]) / float((self.params.K + w_dt) + self.params.V(self.page_rank)))
         return score + self.compute_boost()
+            
+            
+class DocumentVector(object):
+    def __init__(self, params, query):
+        self.tf = {}
+        self.stem = params.stem
+        self.B = params.B
+        self.field_len = 0
+        for term in query.split():
+            self.tf[self.stem(unicode(term, 'utf-8'))] = 0
+        self.tf_computer = params.tf_computer
+        self.bsmooth = params.bsmooth
+        self.query = query
+        self.sw_computer = SmallestWindowComputer(query)
+        self.smallest = -1
+        self.offset = 0
+        if not params.compute_smallest_window:
+            self.sw_computer.suspend()            
+    def smallest_window(self):
+        self.reset_window()
+        return self.smallest
+    def reset_window(self):        
+        candidate = self.sw_computer.compute_smallest_window()
+        if self.smallest == -1 or self.smallest > candidate:
+            self.smallest = candidate
+        self.sw_computer.reset()
+        self.offset = 0
+    def add_term(self, term, offset):
+        term = self.stem(unicode(term, 'utf-8'))
+        if term in self.tf:
+            self.tf[term] += 1
+        self.field_len += 1
+        self.offset += 1
+        if offset == -1:
+            offset = self.offset
+        self.sw_computer.add_term(term, offset)
+    def tfraw_value(self):
+        return [self.tf_computer(self.tf[term]) for term in self.tf.keys()]
+    def tfnorm_value(self, body_length):
+        return [self.tf_computer(self.tf[term])/float(body_length + self.bsmooth) for term in self.tf.keys()]
+    def bm25f_value(self):
+        return [self.tf[term] / (1 + self.B + (self.field_len/float(self.avg_len))) for term in self.tf.keys()]
             
             
 class SmallestWindowComputer(object):
@@ -344,46 +407,6 @@ class SmallestWindowComputer(object):
         self.add_term = lambda term, offset: term
             
             
-class DocumentVector(object):
-    def __init__(self, params, query):
-        self.tf = {}
-        self.stem = params.stem
-        self.B = params.B
-        self.field_len = 0
-        for term in query.split():
-            self.tf[self.stem(unicode(term, 'utf-8'))] = 0
-        self.tf_computer = params.tf_computer
-        self.bsmooth = params.bsmooth
-        self.query = query
-        self.sw_computer = SmallestWindowComputer(query)
-        self.smallest = -1
-        self.offset = 0
-        if not params.compute_smallest_window:
-            self.sw_computer.suspend()
-    def smallest_window(self):
-        self.reset_window()
-        return self.smallest
-    def reset_window(self):        
-        candidate = self.sw_computer.compute_smallest_window()
-        if self.smallest == -1 or self.smallest > candidate:
-            self.smallest = candidate
-        self.sw_computer.reset()
-        self.offset = 0
-    def add_term(self, term, offset):
-        term = self.stem(unicode(term, 'utf-8'))
-        if term in self.tf:
-            self.tf[term] += 1
-        self.field_len += 1
-        self.offset += 1
-        if offset == -1:
-            offset = self.offset
-        self.sw_computer.add_term(term, offset)
-    def tfnorm_value(self, body_length):
-        return [self.tf_computer(self.tf[term])/float(body_length + self.bsmooth) for term in self.tf.keys()]
-    def bm25f_value(self):
-        return [self.tf[term] / (1 + self.B + (self.field_len/float(self.avg_len))) for term in self.tf.keys()]
-            
-            
 class QueryVector(object):
     def __init__(self, query, tf_computer, N, idf_hash, stem):
         self.query = query
@@ -424,7 +447,7 @@ class VectorParameters(object):
         self.stemmer = snowball.EnglishStemmer()
         self.boost = boost
         self.compute_smallest_window = compute_smallest_window
-
+        self.norm = False
     def logLambdaV(self, page_rank):
         return math.log10(params.lam+.1) + math.log10(page_rank+self.bsmooth)
     def logV(self, page_rank):
@@ -438,10 +461,9 @@ class VectorParameters(object):
     def linear_tf(self, count):
         return count
     def log10_tf(self, count):
-        if count == 0:
-            return 1
-        else:
-            return 1 + math.log10(count)
+        if count == 0 or count == 1:
+            count = 1.1
+        return math.log10(count)
             
             
 class Ranker:
@@ -477,7 +499,33 @@ class Ranker:
             print >> self.output, "query: "+scores[0]
             while len(scores[1]) > 0:
                 print >> self.output, "  url: " + heapq.heappop(scores[1])[1]
-                
+
+def create_default_params(window=False, scoring='bm25f'):
+    boost = 1
+    bsmooth = 1.1
+    #window = False
+    if scoring == 'cosine':
+        up = 1
+        tp = 511
+        bp = .05
+        hp = 20000
+        ap = 1111111
+        B = 1
+        K = 1
+        lam = 1
+    elif scoring == 'bm25f':
+        up = 1000
+        tp = 1110
+        bp = 0.05
+        hp = 2000
+        ap = 1111111
+        B  = 1
+        K = 200
+        lam = 1
+        
+    if window:
+        boost = 11111        
+    return VectorParameters(up, tp, bp, hp, ap, bsmooth,  window, boost, B, K, lam)
                 
 if __name__=='__main__':
     args = None

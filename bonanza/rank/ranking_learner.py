@@ -18,8 +18,9 @@ class LearnToRank(object):
     self.relevance = relevance
     self.test_data = test_data
     self.model = linear_model.LinearRegression()
-    self.params = VectorParameters(1, 1, 1, 1, 1, 1.1,  False, 1, 1, 1, 1)
-    self.params.tf_computer = self.params.linear_tf
+    self.params = VectorParameters(1, 1, 1, 1, 1, 1.1,  False, 1, 1, 1, 1) #create_default_params() #create_default_params(scoring='cosine') #
+    self.params.tf_computer = self.params.linear_tf #self.params.log10_tf# self.params.linear_tf #self.params.log10_tf ##self.params.linear_tf #
+    self.params.norm = True
     self.params.stem = self.params.no_stemmer()  
   def training_prep(self):
     self.builder = BM25FRankingBuilder(self.params)
@@ -50,7 +51,9 @@ class LearnToRank(object):
     self.classes = []
     for query, model in self.builder.queries.items():
       self.scores = model.tf_idf_scores(self.scores)
-      self.classes.extend(model.rels())
+      self.classes.extend(model.rels())      
+    self.scores = self.preprocess(self.scores)
+      
   def test(self):
     self.builder = BM25FRankingBuilder(self.params)
     self.builder.extractFeatures(self.test_data)
@@ -61,13 +64,12 @@ class LearnToRank(object):
       assert len(query_model.urls) == len(labels)
       query_model.ranking = []
       for i in range(len(labels)):
-        heapq.heappush(query_model.ranking, (labels[i], query_model.urls[i].url))
+        heapq.heappush(query_model.ranking, (-1*labels[i], query_model.urls[i].url))
     self.query_models = self.builder.queries
   def predict(self, scores):
     return self.model.predict(scores)
   def preprocess(self, scores):
-    return scores
-      
+    return preprocessing.scale(scores)  
       
 class PairwiseSupportVectorMachine(LearnToRank):
   def __init__(self, training_data, relevance, test_data):
@@ -78,20 +80,26 @@ class PairwiseSupportVectorMachine(LearnToRank):
     self.make_vectors()
     print self.scores[0], self.scores[1]
     assert len(self.scores) == len(self.classes)
-    scaled = preprocessing.scale(self.scores)
+    scaled = self.preprocess(self.scores)
     print scaled[0], scaled[1]
     indexes = tuple(combinations([i for i in range(len(scaled))], 2))
+    print "indexes ", len(indexes), indexes[0:100]
     classes1 = []
+    print 'after combinations'
     diffed_scaled_scores = []
     for first, second in indexes:
       if self.classes[first] > self.classes[second]:
         classes1.append(1)
       else:
         classes1.append(-1)
-      diffed_scaled_scores.append(self.difference(scaled[first], scaled[second]))
+      assert len(scaled[first]) == len(scaled[second])
+      diffed_scaled_scores.append(scaled[first] - scaled[second])
     self.scores = diffed_scaled_scores
     self.classes = classes1
+    assert len(diffed_scaled_scores) == len(classes1)
+    print 'before fitting... '
     self.model.fit(self.scores, self.classes)
+    print 'after fitting... '    
   def difference(self, v, v1):
     assert len(v) == len(v1)
     ret = []
@@ -99,14 +107,18 @@ class PairwiseSupportVectorMachine(LearnToRank):
       ret.append((v[i] - v1[i]))
     return ret
   def test(self):
-    self.preprocess = preprocessing.scale
+    print 'calling test'
     super(PairwiseSupportVectorMachine, self).test()
-#  def predict(self, scores):
-#    import numpy as np
-##        weights = model.coef_  
-#    weights = self.model.coef_ / np.linalg.norm(self.model.coef_)
-#    return [np.dot(score, weights) for score in scores]  
-#    
+    print 'test complete...'
+  def predict(self, scores):
+    import numpy as np
+#        weights = model.coef_  
+    weights = self.model.coef_ / np.linalg.norm(self.model.coef_)
+    print "about to test... weights.. ", weights
+    ret = [np.dot(score, weights) for score in scores]
+    print ' test complete ...'
+    return ret
+    
 class PointwiseLinearRegression(LearnToRank):
   def __init__(self, training_data, relevance, test_data):
     super(PointwiseLinearRegression, self).__init__(training_data, relevance, test_data)
@@ -114,6 +126,8 @@ class PointwiseLinearRegression(LearnToRank):
     self.training_prep()
     self.make_vectors()
     self.model.fit(self.scores, self.classes)
+    print " coefficients ", self.model.coef_
+    #self.model.coef_[4] += .05
     
     
 class RankingLearner(object):
