@@ -1,0 +1,9 @@
+Trying to figure which language to use for building systems at
+GYK-Antler. Had problems at Comlinkdata with database connections,
+particularly with regard to connecting to MS SQL Server.
+
+Seems like Java might be the best choice due to the JDBC drivers it
+supports. Looking into Jython too. But I'm weary of going in that
+direction as I haven't done much research into how well Jython works.
+
+Found a promising library written by Christen Thomson. 

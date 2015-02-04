@@ -1,0 +1,784 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="cb1e289d-05ef-4418-9b64-888277fe5315" name="Default" comment="" />
+    <ignored path="etl.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <ignored path=".idea/dataSources.local.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="etl" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="tables.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/tables.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="10050" max-vertical-offset="34455">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#1109#1" expanded="true" />
+                <element signature="e#3491#5330#1" expanded="true" />
+                <element signature="e#7536#7775#1" expanded="true" />
+                <element signature="e#8402#8608#1" expanded="true" />
+                <element signature="e#9173#9538#1" expanded="true" />
+                <element signature="e#10488#10884#1" expanded="true" />
+                <element signature="e#11809#12248#1" expanded="true" />
+                <element signature="e#12549#12886#1" expanded="true" />
+                <element signature="e#13768#13997#1" expanded="true" />
+                <element signature="e#14266#16679#1" expanded="true" />
+                <element signature="e#22438#22781#1" expanded="true" />
+                <element signature="e#23168#27986#1" expanded="true" />
+                <element signature="e#31895#32145#1" expanded="true" />
+                <element signature="e#32690#33122#1" expanded="true" />
+                <element signature="e#42791#43086#1" expanded="true" />
+                <element signature="e#43160#44449#1" expanded="true" />
+                <element signature="e#47583#47921#1" expanded="true" />
+                <element signature="e#48335#48915#1" expanded="true" />
+                <element signature="e#49609#50267#1" expanded="true" />
+                <element signature="e#51396#52249#1" expanded="true" />
+                <element signature="e#52810#53441#1" expanded="true" />
+                <element signature="e#53642#54296#1" expanded="true" />
+                <element signature="e#56999#57461#1" expanded="true" />
+                <element signature="e#58331#58767#1" expanded="true" />
+                <element signature="e#59833#60063#1" expanded="true" />
+                <element signature="e#60448#60571#1" expanded="true" />
+                <element signature="e#60751#61053#1" expanded="true" />
+                <element signature="e#61625#62115#1" expanded="true" />
+                <element signature="e#62601#62716#1" expanded="true" />
+                <element signature="e#62835#63391#1" expanded="true" />
+                <element signature="e#64435#66571#1" expanded="true" />
+                <element signature="e#67841#68100#1" expanded="true" />
+                <element signature="e#68667#68926#1" expanded="true" />
+                <element signature="e#70726#73458#1" expanded="true" />
+                <element signature="e#73941#74171#1" expanded="true" />
+                <element signature="e#74313#75599#1" expanded="true" />
+                <element signature="e#75992#80071#1" expanded="true" />
+                <element signature="e#81162#81368#1" expanded="true" />
+                <element signature="e#81916#82253#1" expanded="true" />
+                <element signature="e#82781#83075#1" expanded="true" />
+                <element signature="e#83308#84420#1" expanded="true" />
+                <element signature="e#85200#85430#1" expanded="true" />
+                <element signature="e#85571#85801#1" expanded="true" />
+                <element signature="e#86117#86347#1" expanded="true" />
+                <element signature="e#87257#87457#1" expanded="true" />
+                <element signature="e#87593#88737#1" expanded="true" />
+                <element signature="e#90001#90152#1" expanded="true" />
+                <element signature="e#90728#90928#1" expanded="true" />
+                <element signature="e#91068#92220#1" expanded="true" />
+                <element signature="e#92781#92932#1" expanded="true" />
+                <element signature="e#93714#93842#1" expanded="true" />
+                <element signature="e#94173#94355#1" expanded="true" />
+                <element signature="e#94513#94713#1" expanded="true" />
+                <element signature="e#95017#95516#1" expanded="true" />
+                <element signature="e#95599#96412#1" expanded="true" />
+                <element signature="e#99656#100102#1" expanded="true" />
+                <element signature="e#100161#100651#1" expanded="true" />
+                <marker date="1422864763000" expanded="true" signature="6877:7084" placeholder="INSERT INTO ..." />
+                <marker date="1422864763000" expanded="true" signature="7214:7234" placeholder="SELECT MAX(m..missing_value..." />
+                <marker date="1422864763000" expanded="true" signature="17540:17555" placeholder="SELECT missi..missing_value..." />
+                <marker date="1422864763000" expanded="true" signature="17689:17704" placeholder="SELECT missi..missing_value..." />
+                <marker date="1422864763000" expanded="true" signature="29884:29929" placeholder="UPDATE missi..." />
+                <marker date="1422864763000" expanded="true" signature="30326:30353" placeholder="SELECT missi..missing_value..." />
+                <marker date="1422864763000" expanded="true" signature="30799:30841" placeholder="SELECT missi..missing_value..." />
+                <marker date="1422864763000" expanded="true" signature="31233:31273" placeholder="SELECT missi..missing_value..." />
+                <marker date="1422864763000" expanded="true" signature="42308:42341" placeholder="UPDATE missi..." />
+                <marker date="1422864763000" expanded="true" signature="59302:59452" placeholder="INSERT INTO ..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="steps.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/steps.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="1862" max-vertical-offset="5310">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="parallel.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/parallel.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13575">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#415#1" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JDBCConnectionWrapper.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/JDBCConnectionWrapper.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7635">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#137#1" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="LICENSE.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/LICENSE.txt">
+          <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="435">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="README.txt" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/README.txt">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="195">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setup.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/setup.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="645">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#73#82#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Makefile" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/Makefile">
+          <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2385">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="FIFODict.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/FIFODict.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.55203044" vertical-offset="120" max-vertical-offset="1785">
+              <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+              <folding>
+                <element signature="e#0#160#1" expanded="true" />
+                <element signature="e#1690#1870#1" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="conf.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/conf.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4125">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding>
+                <element signature="e#504#518#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="index.rst" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/index.rst">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1275">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="make.bat" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/make.bat">
+          <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+            <state />
+          </provider>
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2940">
+              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="167" />
+    <option name="y" value="136" />
+    <option name="width" value="1603" />
+    <option name="height" value="885" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="0" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pygrametl-read-only" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pygrametl-read-only" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pygrametl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="etl" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="pygrametl-read-only" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="docs" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="options.lastSelected" value="preferences.sourceCode.Python" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings />
+    </option>
+  </component>
+  <component name="RunManager">
+    <list size="0" />
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="cb1e289d-05ef-4418-9b64-888277fe5315" name="Default" comment="" />
+      <created>1422860040507</created>
+      <option name="number" value="Default" />
+      <updated>1422860040507</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="167" y="136" width="1603" height="885" extended-state="0" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Application Servers" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2183406" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+    </layout>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager />
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/tables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="34455">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#1109#1" expanded="true" />
+            <element signature="e#3491#5330#1" expanded="true" />
+            <element signature="e#7536#7775#1" expanded="true" />
+            <element signature="e#8402#8608#1" expanded="true" />
+            <element signature="e#9173#9538#1" expanded="true" />
+            <element signature="e#10488#10884#1" expanded="true" />
+            <element signature="e#11809#12248#1" expanded="true" />
+            <element signature="e#12549#12886#1" expanded="true" />
+            <element signature="e#13768#13997#1" expanded="true" />
+            <element signature="e#14266#16679#1" expanded="true" />
+            <element signature="e#22438#22781#1" expanded="true" />
+            <element signature="e#23168#27986#1" expanded="true" />
+            <element signature="e#31895#32145#1" expanded="true" />
+            <element signature="e#32690#33122#1" expanded="true" />
+            <element signature="e#42791#43086#1" expanded="true" />
+            <element signature="e#43160#44449#1" expanded="true" />
+            <element signature="e#47583#47921#1" expanded="true" />
+            <element signature="e#48335#48915#1" expanded="true" />
+            <element signature="e#49609#50267#1" expanded="true" />
+            <element signature="e#51396#52249#1" expanded="true" />
+            <element signature="e#52810#53441#1" expanded="true" />
+            <element signature="e#53642#54296#1" expanded="true" />
+            <element signature="e#56999#57461#1" expanded="true" />
+            <element signature="e#58331#58767#1" expanded="true" />
+            <element signature="e#59833#60063#1" expanded="true" />
+            <element signature="e#60448#60571#1" expanded="true" />
+            <element signature="e#60751#61053#1" expanded="true" />
+            <element signature="e#61625#62115#1" expanded="true" />
+            <element signature="e#62601#62716#1" expanded="true" />
+            <element signature="e#62835#63391#1" expanded="true" />
+            <element signature="e#64435#66571#1" expanded="true" />
+            <element signature="e#67841#68100#1" expanded="true" />
+            <element signature="e#68667#68926#1" expanded="true" />
+            <element signature="e#70726#73458#1" expanded="true" />
+            <element signature="e#73941#74171#1" expanded="true" />
+            <element signature="e#74313#75599#1" expanded="true" />
+            <element signature="e#75992#80071#1" expanded="true" />
+            <element signature="e#81162#81368#1" expanded="true" />
+            <element signature="e#81916#82253#1" expanded="true" />
+            <element signature="e#82781#83075#1" expanded="true" />
+            <element signature="e#83308#84420#1" expanded="true" />
+            <element signature="e#85200#85430#1" expanded="true" />
+            <element signature="e#85571#85801#1" expanded="true" />
+            <element signature="e#86117#86347#1" expanded="true" />
+            <element signature="e#87257#87457#1" expanded="true" />
+            <element signature="e#87593#88737#1" expanded="true" />
+            <element signature="e#90001#90152#1" expanded="true" />
+            <element signature="e#90728#90928#1" expanded="true" />
+            <element signature="e#91068#92220#1" expanded="true" />
+            <element signature="e#92781#92932#1" expanded="true" />
+            <element signature="e#93714#93842#1" expanded="true" />
+            <element signature="e#94173#94355#1" expanded="true" />
+            <element signature="e#94513#94713#1" expanded="true" />
+            <element signature="e#95017#95516#1" expanded="true" />
+            <element signature="e#95599#96412#1" expanded="true" />
+            <element signature="e#99656#100102#1" expanded="true" />
+            <element signature="e#100161#100651#1" expanded="true" />
+            <marker date="1422864763000" expanded="true" signature="6877:7084" placeholder="INSERT INTO ..." />
+            <marker date="1422864763000" expanded="true" signature="7214:7234" placeholder="SELECT MAX(m..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="17540:17555" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="17689:17704" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="29884:29929" placeholder="UPDATE missi..." />
+            <marker date="1422864763000" expanded="true" signature="30326:30353" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="30799:30841" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="31233:31273" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="42308:42341" placeholder="UPDATE missi..." />
+            <marker date="1422864763000" expanded="true" signature="59302:59452" placeholder="INSERT INTO ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/steps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1862" max-vertical-offset="5310">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/parallel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13575">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#415#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/JDBCConnectionWrapper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7635">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#137#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/LICENSE.txt">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="435">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/README.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="195">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="645">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#73#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/Makefile">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2385">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/FIFODict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1785">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#160#1" expanded="true" />
+            <element signature="e#1690#1870#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4125">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#504#518#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/index.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1275">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/make.bat">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2940">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/tables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="10050" max-vertical-offset="34455">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#1109#1" expanded="true" />
+            <element signature="e#3491#5330#1" expanded="true" />
+            <element signature="e#7536#7775#1" expanded="true" />
+            <element signature="e#8402#8608#1" expanded="true" />
+            <element signature="e#9173#9538#1" expanded="true" />
+            <element signature="e#10488#10884#1" expanded="true" />
+            <element signature="e#11809#12248#1" expanded="true" />
+            <element signature="e#12549#12886#1" expanded="true" />
+            <element signature="e#13768#13997#1" expanded="true" />
+            <element signature="e#14266#16679#1" expanded="true" />
+            <element signature="e#22438#22781#1" expanded="true" />
+            <element signature="e#23168#27986#1" expanded="true" />
+            <element signature="e#31895#32145#1" expanded="true" />
+            <element signature="e#32690#33122#1" expanded="true" />
+            <element signature="e#42791#43086#1" expanded="true" />
+            <element signature="e#43160#44449#1" expanded="true" />
+            <element signature="e#47583#47921#1" expanded="true" />
+            <element signature="e#48335#48915#1" expanded="true" />
+            <element signature="e#49609#50267#1" expanded="true" />
+            <element signature="e#51396#52249#1" expanded="true" />
+            <element signature="e#52810#53441#1" expanded="true" />
+            <element signature="e#53642#54296#1" expanded="true" />
+            <element signature="e#56999#57461#1" expanded="true" />
+            <element signature="e#58331#58767#1" expanded="true" />
+            <element signature="e#59833#60063#1" expanded="true" />
+            <element signature="e#60448#60571#1" expanded="true" />
+            <element signature="e#60751#61053#1" expanded="true" />
+            <element signature="e#61625#62115#1" expanded="true" />
+            <element signature="e#62601#62716#1" expanded="true" />
+            <element signature="e#62835#63391#1" expanded="true" />
+            <element signature="e#64435#66571#1" expanded="true" />
+            <element signature="e#67841#68100#1" expanded="true" />
+            <element signature="e#68667#68926#1" expanded="true" />
+            <element signature="e#70726#73458#1" expanded="true" />
+            <element signature="e#73941#74171#1" expanded="true" />
+            <element signature="e#74313#75599#1" expanded="true" />
+            <element signature="e#75992#80071#1" expanded="true" />
+            <element signature="e#81162#81368#1" expanded="true" />
+            <element signature="e#81916#82253#1" expanded="true" />
+            <element signature="e#82781#83075#1" expanded="true" />
+            <element signature="e#83308#84420#1" expanded="true" />
+            <element signature="e#85200#85430#1" expanded="true" />
+            <element signature="e#85571#85801#1" expanded="true" />
+            <element signature="e#86117#86347#1" expanded="true" />
+            <element signature="e#87257#87457#1" expanded="true" />
+            <element signature="e#87593#88737#1" expanded="true" />
+            <element signature="e#90001#90152#1" expanded="true" />
+            <element signature="e#90728#90928#1" expanded="true" />
+            <element signature="e#91068#92220#1" expanded="true" />
+            <element signature="e#92781#92932#1" expanded="true" />
+            <element signature="e#93714#93842#1" expanded="true" />
+            <element signature="e#94173#94355#1" expanded="true" />
+            <element signature="e#94513#94713#1" expanded="true" />
+            <element signature="e#95017#95516#1" expanded="true" />
+            <element signature="e#95599#96412#1" expanded="true" />
+            <element signature="e#99656#100102#1" expanded="true" />
+            <element signature="e#100161#100651#1" expanded="true" />
+            <marker date="1422864763000" expanded="true" signature="6877:7084" placeholder="INSERT INTO ..." />
+            <marker date="1422864763000" expanded="true" signature="7214:7234" placeholder="SELECT MAX(m..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="17540:17555" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="17689:17704" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="29884:29929" placeholder="UPDATE missi..." />
+            <marker date="1422864763000" expanded="true" signature="30326:30353" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="30799:30841" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="31233:31273" placeholder="SELECT missi..missing_value..." />
+            <marker date="1422864763000" expanded="true" signature="42308:42341" placeholder="UPDATE missi..." />
+            <marker date="1422864763000" expanded="true" signature="59302:59452" placeholder="INSERT INTO ..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/steps.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="5355">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/parallel.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="13575">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#415#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/JDBCConnectionWrapper.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7635">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#137#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/LICENSE.txt">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="630">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/README.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="660">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/setup.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="660">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#73#82#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/conf.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="4110">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#504#518#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/index.rst">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1275">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/make.bat">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2940">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/docs/Makefile">
+      <provider editor-type-id="com.intellij.database.editor.CsvTableFileEditorProvider">
+        <state />
+      </provider>
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2385">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/pygrametl-read-only/pygrametl/FIFODict.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.55203044" vertical-offset="120" max-vertical-offset="1785">
+          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#160#1" expanded="true" />
+            <element signature="e#1690#1870#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>

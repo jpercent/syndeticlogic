@@ -1,0 +1,302 @@
+Getting Spark Setup in Eclipse
+Posted on March 26, 2013 by James Percent
+Spark is a new distributed programming framework for analyzing large data sets.  It took me a few steps to get the system setup in Eclipse, so I thought I’d write them down.  Hopefully this post saves someone a few minutes.
+
+Fair warning, the Spark project seems to be moving fast, so this could get out of date quickly…
+
+Building from Source
+
+First download the sources from the Git repository.  Then try to build it.  To build it you need to specify a profile.  Below are the commands I used to accomplish these steps.
+
+$ git clone github.com:mesos.git/spark
+$ mvn -U -Phadoop2 clean install -DskipTests
+Unfortunately, that didn’t just work for me.  I have reason to believe the issue is environmental (see below), so it might work for you.
+
+If this step works for you, then move on to the next section.  Below is the build error I received.
+
+[ERROR] Failed to execute goal on project spark-core: Could not
+resolve dependencies for project
+org.spark-project:spark-core:jar:0.7.1-SNAPSHOT: The following
+artifacts could not be resolved: cc.spray:spray-can:jar:1.0-M2.1,
+cc.spray:spray-server:jar:1.0-M2.1,
+cc.spray:spray-json_2.9.2:jar:1.1.1: Could not find artifact
+cc.spray:spray-can:jar:1.0-M2.1 in jboss-repo
+(http://repository.jboss.org/nexus/content/repositories/releases/)
+This error is bit misleading.  The repository.jboss.org is just the last repo missing the artifacts.  After inspecting spark/pom.xml, the problem is that mvn cannot download the jars from repo.spray.cc.  The spark/pom.xml seems to be correct, and, surprisingly, repo.spray.cc seems to be okay too.
+
+The spray docs indicate repo.spray.io is the maven repo.  But both domains point the same IP address.  For sanity, I tried it, but had the same problem.
+
+The work around is to put the files in the .m2 repository manually.  Below is the script I used.
+
+for k in can io util server base; do
+ dir="cc/spray/spray-$k/1.0-M2.1/"
+ mkdir -p ~/.m2/repository/$dir
+ cd ~/.m2/repository/$dir
+ wget http://repo.spray.io/$dir/spray-$k-1.0-M2.1.pom
+ wget http://repo.spray.io/$dir/spray-$k-1.0-M2.1.jar
+done
+
+dir="cc/spray/spray-json_2.9.2/1.1.1"
+mkdir -p ~/.m2/repository/$dir
+cd ~/.m2/repository/$dir
+wget http://repo.spray.io/$dir/spray-json_2.9.2-1.1.1.jar
+wget http://repo.spray.io/$dir/spray-json_2.9.2-1.1.1.pom
+
+dir="cc/spray/twirl-api_2.9.2/0.5.2"
+mkdir -p ~/.m2/repository/$dir
+cd ~/.m2/repository/$dir
+wget http://repo.spray.io/$dir/twirl-api_2.9.2-0.5.2.jar
+wget http://repo.spray.io/$dir/twirl-api_2.9.2-0.5.2.pom
+This really sucks, but it works for this error.  I found a stackoverflow regarding a similar mvn issue – 1 poster claimed that downgrading to java 6 fixed it.  It seems strange that it would be a java 7 issue, but I’ve encountered stranger things.  I didn’t test downgrading.
+
+For reference, below is my environment.
+
+james@minerva:~/spark$ mvn -version
+Apache Maven 3.0.4
+Maven home: /usr/share/maven
+Java version: 1.7.0_17, vendor: Oracle Corporation
+Java home: /usr/lib/jvm/java-7-oracle/jre
+Default locale: en_US, platform encoding: UTF-8
+OS name: "linux", version: "3.2.0-38-generic", arch: "amd64",
+family: "unix"
+Eclipse Setup
+
+The Eclipse setup is pretty straight forward.  But if you’ve never done a Java/Scala Eclipse setup it can take a couple hours to figure out what needs to happen.
+
+From within Eclipse, install EGit and the Scala IDE plugin.  Pay attention to the version of Eclipse and Scala.  At the time of this writing Spark is based on Scala 2.9.2 and I was running Juno.
+
+I never, ever use the m2eclipse plugin.  Some people I know use it successfully, but not me.  I use mvn to generate the .project and .classpath files.  I don’t know anyone that mixes these approaches.
+
+Below is the command that I used to generate the project files.
+
+$ mvn -Phadoop2 eclipse:clean eclipse:eclipse
+Next, import the projects from Git (at this time that includes spark-core, spark-bagel, spark-repl, spark-streaming and spark-examples). To do this, select File->import->Projects from git.
+
+Next, we need to connect the Scala IDE plugin with each project that has Scala source files (spark-core, spark-bagel, spark-repl and spark-streaming).  To do so right-click on the project and select Configure->Add Scala Nature.  Below is a picture.
+
+Next, we need to add the Scala source folders to the build path (each src/main/scala and src/test/scala folder).   To accomplish this, right-click on the folder and select Add to Build Path->Use As Source Folder.
+
+Spark mixes .java and .scala files in a non-standard way that can confuse the Scala IDE plugin, so we need to make sure that all the source folders include .scala files in the classpath.  To check if this is the case, look at the .classpath.  It should have an entry like the following for all the scala source folders.
+
+
+
+ <classpathentry including="**/*.java|**/*.scala" kind="src"
+  path="src/main/scala"/>
+If the there is no **/*.scala in the classpathentry for any source folder with Scala code in it, then we need to add it.  It can be added via Eclipse through the GUI, or we can edit the .classpath file directly.
+
+Inclusion filters can be added from the Eclipse GUI by right-clicking on the source folder and selectiong Build Path->Configure Inclusion/Exclusion Filters and add **/*.scala.
+
+Finally, add spark-core to the build path of spark-repl and spark-streaming.  To do this, right-click on the project and Add to Build Path->Configure Build Path->Add projects (then select spark-core).
+
+
+
+Posted in Uncategorized	| Comments Off
+Got Some New Hardware
+Posted on February 2, 2012 by James Percent
+Over the last decade I’ve played with a lot of hardware; particularly, big iron hardware.  We can loosely classify these systems as having many processors/cores, many gigabytes of memory, many terabytes of storage, and many gigabytes of memory, network and storage bandwidth.
+
+
+
+Over the years I’ve learned a lot about making software on these systems go fast, and I have some ideas I would like to research.
+
+But the research I would like to conduct takes a bit more than my laptop has to offer, and virtual-machine-based platforms like Amazon’s EC2 are also not very helpful.  So, I got some new hardware.
+
+Frankly it’s quite astonishing the horsepower that can be purchased with a couple thousand dollars.  The rest of this post documents my new hardware.
+
+2 Intel Xeon E5645 Westmere-EP 2.4 GHz
+6 cores each (12 cores total)
+each core 256KB L2 cache
+12 MB L3 Cache
+5 Seagate Barracuda 1 TB hard drives
+7200 RPM
+32 MB Cache
+SATA 6.0 Gb/s
+12 Kingston 240-pin DDR3-1333
+2 GB per stick (24 GB total)
+Super micro SYS-6026T
+Dual Intel Xeon LGA 1366 Sockets
+Intel 5520 North Bridge
+ICH10R+ IOH-36D South Bridge
+18 240-pin 1333, ECC (192 GB max)
+8 x 3.5″ SATA
+SATA RAID 0/1/5/10
+2 Intel 82576 1000 Mbps
+2 x8 PCI Express slots
+1 1333 MHz PCI-X (3.3v) slot
+Posted in Uncategorized	| Comments Off
+Auto Builder: A Tool for Automating PDE-based OSGi Builds
+Posted on January 8, 2011 by James Percent
+Prelude
+
+During the summer of 2010 I was helping out with the Rifidi project.  As part of that, I recommended getting a continuous integration (CI) system in place.
+
+Surprisingly, because of the infrastructure that the Rifidi platform is based on, this was not as straight forward as I thought it would be.  The platform is based on OSGi technology – a dynamic module and service registry specification for Java-based applications.  In particular, it’s based on Eclipse’s Plugin Development Environment (PDE).
+
+While PDE provides a fairly sophisticated and mature set of tools for OSGi-based development, when it comes to automation and continuous integration, the PDE build tooling is abstruse and the maven-based tools I played with, when integrated with PDE, didn’t “just work.”
+
+We wanted to do all of our coding in PDE and have a Hudson-based CI without any fuss in between.  So I rolled my own tool, called auto builder, that automatically generates Ant-based build artifacts.  It’s completely declarative and supports transitive closure over dependencies.
+
+The rest of this post documents how to install and use the auto builder.
+
+Overview
+
+The auto builder is a Python program that will introspect a PDE project and generate Ant-based build artifacts.  The build artifacts include targets for compiling, testing and packaging the source bundles of the project.
+
+The auto builder consists of an OSGi Manifest parser, which is implemented with the PLY (Python Lex-Yacc) parse generator, a dependency resolver and a build script generator.  It is designed to be very hands off – it only needs to know the path(s) to the target platform bundles and the path(s) to the source bundles.  It is as simple as that.
+
+Installation
+
+To install the auto builder, Python 2.x needs to be installed and working on your system.  I have packaged a zip version here, which should play nicely with Windows, and a tar.gz version here.  The sources are on Google code and can also be downloaded from there via subversion.
+
+A treasure trove of Python package installation documentation is here.  Just the same, I will cover how to install for UNIX variants; note, the following installation instructions will also work for Windows users that have Cygwin installed.
+
+First download the tar.gz version linked above and run the following script from the command-line:
+
+$ tar xzvf auto-builder-1.0.tar.gz \
+ && pushd auto-builder-1.0 \
+ && sudo python setup.py install \
+ && popd
+That’s it!  The installation can be validated with 2 commands.  First, run the following command: which auto-build.   If the installation failed, then the which command will complain that it can not find auto-build.
+
+Next, fire-up the Python interpreter and run: import auto_builder.  If the installation failed, then doing so will result in an ImportError exception.  Here’s what a successful validation looks like:
+
+$ python
+>>> import auto_builder
+>>>
+$ which auto-build
+/usr/local/bin/auto-build
+Usage
+
+The auto builder only needs to know the path to the libraries that comprise the target platform of the project (binary bundles — a.k.a. the jar files) and the paths to the source bundles of the project.
+
+The easiest way to feed this information into the auto builder is to define a file called conf.py; it must be defined the directory from which the auto builder is executed (more on execution in a second).  Here’s an conf.py example:
+
+# Author: James Percent (james@empty-set.net)
+# Copyright 2010, 2011 James Percent
+
+project_name = 'Minerva'
+
+library_path = [
+ '../Minerva-SDK/lib/'
+]
+
+source_path = [
+ '../org.syndeticlogic.minerva',
+ '../org.syndeticlogic.minerva.adapters',
+ '../org.syndeticlogic.minerva.init',
+ '../org.syndeticlogic.minerva.tools'
+]
+The example configuration file defines the following parameters:
+
+library_path – a Python list of string variables that is path(s) to the bundle libraries that comprise the target platform;
+source_path – a Python list of string variables that correspond to the source bundles of the project;
+project_name – a Python string that represents the name of the project.
+The project_name is completely optional.  The library_path and source_path are required.  However, they can also be defined via the command-line if that is preferable.
+
+The user interface to the auto builder is the auto-build script.  Here’s the output from running the help:
+
+$ auto-build --help
+Usage: auto-build [options]
+Options:
+ --version            show program's version number and exit
+ -h, --help           show this help message and exit
+ -j, --display-jars   display binary bundles found on the
+                      library_path
+ -d, --display-src    display source bundles found on the
+                      source_path
+ -c, --check-dep      validate dependencies without generating build
+                      artifacts
+ -b, --build-gen      validate dependencies and generate build
+                      artifacts; set by default if no other options
+                      are set
+-p PATH, --lib-path=PATH
+                      colon separated list of valid root directories
+                      to search for binary bundles (search path for
+                      the target platform); overrides the
+                      library_path defined in conf.py
+ -s PATH, --source-path=PATH
+                      colon separated list of valid root directories
+                      to search for source bundles; overrides the
+                      source_path defined in conf.py
+ -n NAME, --project-name=NAME
+                      specifies the name to use in the generated
+                      content; overrides the project_name defined in
+                      conf.py
+-l LEVEL, --logging-level=LEVEL
+                      set the logging level; valid values are debug,
+                      info, warn, error and critical
+The option of interest here is –build-gen.  As advertised it’s the default option.  All you have to do is set up the conf.py and run auto-build and it will generate build scripts for your project.  An example build script, generated by auto builder, for the Minerva project is here.
+
+The other options are really straight forward.  If you’re not sure what they do, just run them and you’ll see…
+
+Conclusion
+
+The auto builder is a tool that discovers the structure of a PDE-based project and automatically generates standard, Ant-based build artifacts.  It’s declarative, performs transitive closure over dependencies, and does not define its own, new vocabulary.  It just plain works.
+
+My opinion is that systems themselves define their assembly; therefore the assemply process should be completely automated.  And generating Ant files is an interesting strategy because it gives you all the benefits of a declarative build tool, but it leaves you with a procedural description of what it is doing.
+
+The next steps are to find more projects to test on, and to add support for automatic dependency download.  I already have code for automatically downloading dependencies from RFC-0112 bundle repositories.  If I could garner interest, then I could easily integrate it.
+
+Posted in auto-builder, Software	| Tagged ant, CI, equinox, Java, OSGi, PDE, python	| Comments Off
+Reader/Writer Lock using Semaphores
+Posted on January 6, 2011 by James Percent
+Recently, I went through a round of high-tech interviews.  Interviewers ranged from intriguing and fun to abrasive and socially unconscious.  Overall, I was pleasantly surprised by the diversity of personalities.
+
+One annoyingly misinformed interviewer was thoroughly convinced that a reader/writer lock can not be implemented using semaphores.  It’s actually really simple.
+
+The tricky part is realizing that there are multiple sets of events that need to be synchronized.  The rest of this post describes how it can be done using 2 semaphores and presents a Java-based implementation.
+
+A savvy reader will note that with 2 semaphores starvation of the writer is possible.  However, the starvation scenario can be eliminated by using a 3rd semaphore and extending the same idea.  But to do so adds complexity, muddies the presentation and obscures the underlying idea.
+
+Let readerSem, writerSem be binary semaphores, readCount be an integer, and readLock, readUnlock, writeLock and writeUnlock be methods/functions.
+
+When readLock is invoked it acquires readerSem.  If readCount = 0, then it acquires writerSem.  It increments the readCount and releases readerSem before it returns.  When readUnlock is invoked, it acquires readerSem and decrements readCount.  If readCount = 0, then it releases writerSem.  It releases readerSem before it returns.
+
+When writeLock or writeUnlock are invoked, writerSem is acquired or released respectively.
+
+Voila!  That’s all there is to it.  The readerSem synchronizes the readLock and readUnlock invocations, and the writerSem synchronizes readLock/Unlock and writeLock/Unlock.
+
+Guaranteeing fairness (eliminating writer starvation) implies another synchronization – namely that no readers get the lock if a writer is blocking – which can be achieved by adding another semaphore.
+
+import java.util.concurrent.Semaphore;
+
+public class ReaderWriterLock {
+
+  public ReaderWriterLock() {
+    readers = 0;
+    readLock = new Semaphore(1);
+    readWriteLock = new Semaphore(1);
+  }
+
+  public void writeLock() throws InterruptedException {
+    readWriteLock.acquire();
+  }
+
+  public void writeUnlock() throws InterruptedException {
+   readWriteLock.release();
+  }
+
+  public void readLock() throws InterruptedException {
+    readLockUnlock.acquire();
+    if(readers == 0) {
+      readWriteLock.acquire();
+    }
+   readers++;
+   readLockUnlock.release();
+ }
+
+  public void readUnlock() throws InterruptedException {
+    assert readers > 0;
+    readLockUnlock.acquire();
+    readers--;
+    if(readers == 0) {
+      readWriteLock.release();
+    }
+    readLockUnlock.release();
+  }
+
+  private Semaphore readLock;
+  private Semaphore readWriteLock;
+  private int readers;
+}
+Posted in Computer Science, Software	| Comments Off
